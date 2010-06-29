@@ -9,7 +9,7 @@
  */
 
 /**
- * lessCompileTask compiles CoffeeScript files thru symfony cli task system.
+ * coffeescriptCompileTask compiles CoffeeScript files thru symfony cli task system.
  *
  * @package	sfCoffeeScriptPlugin
  * @subpackage tasks
@@ -36,7 +36,7 @@ class coffeescriptCompileTask extends sfBaseTask {
 			),
 			new sfCommandOption(
 				'clean', null, sfCommandOption::PARAMETER_NONE,
-				'Removing all compiled JS in web/css before compile'
+				'Removing all compiled JS in web/js before compile'
 			),
 			new sfCommandOption(
 				'compress', null, sfCommandOption::PARAMETER_NONE,
@@ -50,7 +50,7 @@ class coffeescriptCompileTask extends sfBaseTask {
 
 		$this->namespace = 'coffeescript';
 		$this->name = 'compile';
-		$this->briefDescription = 'Recompiles CoffeeScript styles into web/js';
+		$this->briefDescription = 'Recompiles CoffeeScript scripts into web/js';
 		$this->detailedDescription = <<<EOF
 The [coffeescript:compile|INFO] task recompiles CoffeeScript scripts and puts compiled JS into web/js folder.
 Call it with:
@@ -74,7 +74,7 @@ EOF;
 			}
 		}
 
-		// Inits sfLESS instance for compilation help
+		// Inits sfCoffeeScript instance for compilation help
 		$csHelper = new sfCoffeeScript(false, isset($options['compress']) && $options['compress']);
 
 		// Outputs debug info
@@ -92,8 +92,8 @@ EOF;
 				if ($csHelper->compile($csFile)) {
 					if (isset($options['debug']) && $options['debug']) {
 						$this->logSection('compiled', sprintf("%s => %s",
-							sfLESS::getProjectRelativePath($csFile),
-							sfLESS::getProjectRelativePath(sfLESS::getJsPathOfCoffee($csFile))
+							sfCoffeeScript::getProjectRelativePath($csFile),
+							sfCoffeeScript::getProjectRelativePath(sfCoffeeScript::getJsPathOfCoffee($csFile))
 						), null, 'COMMAND');
 					}
 					else

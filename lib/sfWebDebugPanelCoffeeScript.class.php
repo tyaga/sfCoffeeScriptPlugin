@@ -9,14 +9,14 @@
  */
 
 /**
- * sfWebDebugPanelLESS implements LESS web debug panel.
+ * sfWebDebugPanelCoffeeScript implements CoffeeScript web debug panel.
  *
- * @package	sfLESSPlugin
+ * @package	sfCoffeeScriptPlugin
  * @subpackage debug
- * @author	 Konstantin Kudryashov <ever.zet@gmail.com>
+ * @author	 Alexey Tyagunov <atyaga@gmail.com>
  * @version	1.0.0
  */
-class sfWebDebugPanelLESS extends sfWebDebugPanel {
+class sfWebDebugPanelCoffeeScript extends sfWebDebugPanel {
 	/**
 	 * Listens to LoadDebugWebPanel event & adds this panel to the Web Debug toolbar
 	 *
@@ -24,7 +24,7 @@ class sfWebDebugPanelLESS extends sfWebDebugPanel {
 	 */
 	public static function listenToLoadDebugWebPanelEvent(sfEvent $event) {
 		$event->getSubject()->setPanel(
-			'documentation',
+			'coffee-script',
 			new self($event->getSubject())
 		);
 	}
@@ -33,25 +33,29 @@ class sfWebDebugPanelLESS extends sfWebDebugPanel {
 	 * @see sfWebDebugPanel
 	 */
 	public function getTitle() {
-		return '<img src="/sfLESSPlugin/images/css_go.png" alt="LESS helper" height="16" width="16" /> less';
+		return '<img src="/sfCoffeeScriptPlugin/images/javascript-go.png" alt="CoffeeScript helper" height="16" width="16" /> CoffeeScript';
 	}
 
 	/**
 	 * @see sfWebDebugPanel
 	 */
 	public function getPanelTitle() {
-		return 'LESS Stylesheets';
+		return 'CoffeeScript scripts';
 	}
 
 	/**
 	 * @see sfWebDebugPanel
 	 */
 	public function getPanelContent() {
-		$panel = $this->getConfigurationContent() . '<table class="sfWebDebugLogs" style="width: 300px"><tr><th>less file</th><th>css file</th><th style="text-align:center;">time (ms)</th></tr>';
-		$errorDescriptions = sfLESS::getCompileErrors();
-		foreach (sfLESS::getCompileResults() as $info)
+		$panel = $this->getConfigurationContent() .
+			'<table class="sfWebDebugLogs" style="width: 300px">
+			<tr><th>coffee file</th>
+			<th>js file</th>
+			<th style="text-align:center;">time (ms)</th></tr>';
+		$errorDescriptions = sfCoffeeScript::getCompileErrors();
+		foreach (sfCoffeeScript::getCompileResults() as $info)
 		{
-			$info['error'] = isset($errorDescriptions[$info['lessFile']]) ? $errorDescriptions[$info['lessFile']] : false;
+			$info['error'] = isset($errorDescriptions[$info['csFile']]) ? $errorDescriptions[$info['csFile']] : false;
 			$panel .= $this->getInfoContent($info);
 		}
 		$panel .= '</table>';
@@ -60,14 +64,14 @@ class sfWebDebugPanelLESS extends sfWebDebugPanel {
 	}
 
 	/**
-	 * Returns configuration information for LESS compiler
+	 * Returns configuration information for CoffeeScript compiler
 	 *
 	 * @return  string
 	 */
 	protected function getConfigurationContent() {
-		$debugInfo = '<dl id="less_debug" style="display: none;">';
-		$lessHelper = new sfLESS;
-		foreach ($lessHelper->getDebugInfo() as $name => $value)
+		$debugInfo = '<dl id="coffeescript_debug" style="display: none;">';
+		$csHelper = new sfCoffeeScript;
+		foreach ($csHelper->getDebugInfo() as $name => $value)
 		{
 			$debugInfo .= sprintf('<dt style="float:left; width: 100px"><strong>%s:</strong></dt>
       <dd>%s</dd>', $name, $value);
@@ -78,24 +82,24 @@ class sfWebDebugPanelLESS extends sfWebDebugPanel {
       <h2>configuration %s</h2>
       %s<br/>
 EOF
-			, $this->getToggler('less_debug', 'Toggle debug info')
+			, $this->getToggler('coffeescript_debug', 'Toggle debug info')
 			, $debugInfo
 		);
 	}
 
 	/**
-	 * Returns information row for LESS style compilation
+	 * Returns information row for CoffeeScript style compilation
 	 *
 	 * @param   array   $info info of compilation process
 	 * @return  string
 	 */
 	protected function getInfoContent($info, $error = false) {
 		// ID of error row
-		$errorId = md5($info['lessFile']);
+		$errorId = md5($info['csFile']);
 
 		// File link for preferred editor
 		$fileLink = $this->formatFileLink(
-			$info['lessFile'], 1, str_replace(sfLESS::getLessPaths(), '', $info['lessFile'])
+			$info['csFile'], 1, str_replace(sfCoffeeScript::getCsPaths(), '', $info['csFile'])
 		);
 
 		// Checking compile & error statuses
@@ -106,7 +110,7 @@ EOF
 		{
 			$this->setStatus(sfLogger::ERR);
 			$trStyle = 'background-color:#f18c89;';
-			$fileLink .= ' ' . $this->getToggler('less_error_' . $errorId, 'Toggle error info');
+			$fileLink .= ' ' . $this->getToggler('cs_error_' . $errorId, 'Toggle error info');
 		}
 		else
 		{
@@ -120,11 +124,12 @@ EOF
         <td class="sfWebDebugLogType">%s</td>
         <td class="sfWebDebugLogNumber" style="text-align:center;">%.2f</td>
       </tr>
-      <tr id="less_error_%s" style="display:none;background-color:#f18c89;"><td style="padding-left:15px" colspan="2">%s<td></tr>
+      <tr id="cs_error_%s" style="display:none;background-color:#f18c89;">
+		  <td style="padding-left:15px" colspan="2">%s<td></tr>
 EOF
 			, $trStyle
 			, $fileLink
-			, str_replace(sfLESS::getCssPaths(), '', $info['cssFile'])
+			, str_replace(sfCoffeeScript::getJsPaths(), '', $info['jsFile'])
 			, ($info['isCompiled'] ? $info['compTime'] * 1000 : 0)
 			, $errorId
 			, $info['error']

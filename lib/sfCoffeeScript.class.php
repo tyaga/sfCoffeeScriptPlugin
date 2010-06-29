@@ -64,7 +64,7 @@ class sfCoffeeScript {
 	}
 
 	/**
-	 * Returns array of compiled styles info
+	 * Returns array of compiled scripts info
 	 *
 	 * @return  array
 	 */
@@ -73,7 +73,7 @@ class sfCoffeeScript {
 	}
 
 	/**
-	 * Returns array of compiled styles errors
+	 * Returns array of compiled scripts errors
 	 *
 	 * @return  array
 	 */
@@ -160,7 +160,7 @@ class sfCoffeeScript {
 	/**
 	 * Returns paths to JS files
 	 *
-	 * @return  string  a path to CSS files directory
+	 * @return  string  a path to JS files directory
 	 */
 	static public function getJsPaths() {
 		return self::getSepFixedPath(sfConfig::get('sf_web_dir')) . '/js/';
@@ -169,7 +169,7 @@ class sfCoffeeScript {
 	/**
 	 * Returns all coffee files under the coffee directory
 	 *
-	 * @return  array   an array of CSS files
+	 * @return  array   an array of JS files
 	 */
 	static public function findJsFiles() {
 		return sfFinder::type('file')
@@ -183,7 +183,7 @@ class sfCoffeeScript {
 	 *
 	 * @return  string  a header text for JS files
 	 */
-	static protected function getCssHeader() {
+	static protected function getJsHeader() {
 		return '/* This JS is autocompiled by CoffeeScript parser. Don\'t edit it manually. */';
 	}
 
@@ -201,7 +201,7 @@ class sfCoffeeScript {
 		$line = stream_get_line($fp, 1024, "\n");
 		fclose($fp);
 
-		return (0 === strcmp($line, self::getCssHeader()));
+		return (0 === strcmp($line, self::getJsHeader()));
 	}
 
 	/**
@@ -235,8 +235,8 @@ class sfCoffeeScript {
 	 */
 	static public function getJsPathOfCs($csFile) {
 		return str_replace(
-			array(self::getLessPaths(), '.coffee'),
-			array(self::getCssPaths(), '.js'),
+			array(self::getCsPaths(), '.coffee'),
+			array(self::getJsPaths(), '.js'),
 			$csFile
 		);
 	}
@@ -285,7 +285,7 @@ class sfCoffeeScript {
 		// Is file compiled
 		$isCompiled = false;
 
-		// If we check dates - recompile only really old CSS
+		// If we check dates - recompile only really old JS
 		if ($this->isCheckDates()) {
 			if (!is_file($jsFile) || filemtime($csFile) > filemtime($jsFile)) {
 				$isCompiled = $this->callCompiler($csFile, $jsFile);
@@ -343,7 +343,7 @@ class sfCoffeeScript {
 
 		// Compress JS if we use compression
 		if ($this->isUseCompression()) {
-			$buffer = self::getCompressedCss($buffer);
+			$buffer = self::getCompressedJs($buffer);
 		}
 
 		// Add compiler header to JS & writes it to file
@@ -371,7 +371,7 @@ class sfCoffeeScript {
 	public function callCoffeeCompiler($csFile, $jsFile) {
 		// Compile with coffee
 		$fs = new sfFilesystem;
-		$command = sprintf('coffee "%s" "%s"', $csFile, $jsFile);
+		$command = sprintf('coffee -c "%s" -o "%s" ', $csFile, dirname($jsFile));
 
 		if ('1.3.0' <= SYMFONY_VERSION) {
 			try
