@@ -33,7 +33,7 @@ class sfWebDebugPanelCoffeeScript extends sfWebDebugPanel {
 	 * @see sfWebDebugPanel
 	 */
 	public function getTitle() {
-		return '<img src="/sfCoffeeScriptPlugin/images/javascript-go.png" alt="CoffeeScript helper" height="16" width="16" /> CoffeeScript';
+		return '<img src="/sfCoffeeScriptPlugin/images/javascript.png" alt="CoffeeScript converter" height="16" width="16" /> CoffeeScript';
 	}
 
 	/**
