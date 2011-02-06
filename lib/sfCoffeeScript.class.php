@@ -371,7 +371,7 @@ class sfCoffeeScript {
 	public function callCoffeeCompiler($csFile, $jsFile) {
 		// Compile with coffee
 		$fs = new sfFilesystem;
-		$command = sprintf('coffee --no-wrap --output "%s" --compile "%s" ', dirname($jsFile), $csFile);
+		$command = sprintf('coffee --bare --output "%s" --compile "%s" ', dirname($jsFile), $csFile);
 
 		if ('1.3.0' <= SYMFONY_VERSION) {
 			try
