@@ -64,14 +64,14 @@ EOF;
 	 */
 	protected function execute($arguments = array(), $options = array()) {
 
-        if( $options['application'] !== null ) {
-            $configuration = ProjectConfiguration::getApplicationConfiguration(
-	            $options['application'], $options['env'] ? $options['env'] : 'prod',
-                true
-            );
-      
-            $this->setConfiguration($configuration);
-        }
+		if( $options['application'] !== null ) {
+			$configuration = ProjectConfiguration::getApplicationConfiguration(
+				$options['application'], $options['env'] ? $options['env'] : 'prod',
+				true
+			);
+
+			$this->setConfiguration($configuration);
+		}
 
 		// Remove old JS files if --clean option specified
 		if (isset($options['clean']) && $options['clean']) {

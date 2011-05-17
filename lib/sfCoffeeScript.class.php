@@ -211,16 +211,16 @@ class sfCoffeeScript {
 	 */
 	static public function getCsPaths() {
 
-    $csPaths = array();
-    $defaultCsPath = self::getSepFixedPath(sfConfig::get('sf_web_dir')) . '/coffee/';
-    $userCsPaths = sfConfig::get('app_sf_coffeescript_plugin_scripts_dirs', 
-                                 array($defaultCsPath));
+	$csPaths = array();
+	$defaultCsPath = self::getSepFixedPath(sfConfig::get('sf_web_dir')) . '/coffee/';
+	$userCsPaths = sfConfig::get('app_sf_coffeescript_plugin_scripts_dirs', 
+								 array($defaultCsPath));
 
-    foreach ($userCsPaths as $path) {
-      $path = str_replace("%", "*", $path);
-      $csPaths = array_merge($csPaths, glob($path));
-    }
-    
+	foreach ($userCsPaths as $path) {
+	  $path = str_replace("%", "*", $path);
+	  $csPaths = array_merge($csPaths, glob($path));
+	}
+	
 		return $csPaths;
 	}
 
@@ -326,7 +326,7 @@ class sfCoffeeScript {
 	 * @return  string		compressed JS
 	 */
 	static public function getCompressedJs($js) {
-		return str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $js);
+		return str_replace(array("\r\n", "\r", "\n", "\t", '  ', '	', '	'), '', $js);
 	}
 
 	/**
