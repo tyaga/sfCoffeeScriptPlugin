@@ -163,7 +163,7 @@ class sfCoffeeScript {
 	 * @return  string  a path to JS files directory
 	 */
 	static public function getJsPaths() {
-		return self::getSepFixedPath(sfConfig::get('sf_web_dir')) . '/js/';
+		return self::getSepFixedPath(sfConfig::get('sf_web_dir')) . '/js';
 	}
 
 	/**
@@ -210,7 +210,18 @@ class sfCoffeeScript {
 	 * @return  string  a path to coffee files directories
 	 */
 	static public function getCsPaths() {
-		return self::getSepFixedPath(sfConfig::get('sf_web_dir')) . '/coffee/';
+
+    $csPaths = array();
+    $defaultCsPath = self::getSepFixedPath(sfConfig::get('sf_web_dir')) . '/coffee/';
+    $userCsPaths = sfConfig::get('app_sf_coffeescript_plugin_scripts_dirs', 
+                                 array($defaultCsPath));
+
+    foreach ($userCsPaths as $path) {
+      $path = str_replace("%", "*", $path);
+      $csPaths = array_merge($csPaths, glob($path));
+    }
+    
+		return $csPaths;
 	}
 
 	/**
@@ -235,7 +246,7 @@ class sfCoffeeScript {
 	 */
 	static public function getJsPathOfCs($csFile) {
 		return str_replace(
-			array(self::getCsPaths(), '.coffee'),
+			array(dirname($csFile), '.coffee'),
 			array(self::getJsPaths(), '.js'),
 			$csFile
 		);
