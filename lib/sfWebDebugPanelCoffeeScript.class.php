@@ -33,7 +33,7 @@ class sfWebDebugPanelCoffeeScript extends sfWebDebugPanel {
 	 * @see sfWebDebugPanel
 	 */
 	public function getTitle() {
-		return '<img src="/sfCoffeeScriptPlugin/images/javascript.png" alt="CoffeeScript converter" height="16" width="16" /> CoffeeScript';
+		return '<img src="/sfCoffeeScriptPlugin/images/javascript.png" alt="" height="16" width="16" /> CoffeeScript';
 	}
 
 	/**
@@ -74,13 +74,13 @@ class sfWebDebugPanelCoffeeScript extends sfWebDebugPanel {
 		foreach ($csHelper->getDebugInfo() as $name => $value)
 		{
 			$debugInfo .= sprintf('<dt style="float:left; width: 100px"><strong>%s:</strong></dt>
-      <dd>%s</dd>', $name, $value);
+	  <dd>%s</dd>', $name, $value);
 		}
 		$debugInfo .= '</dl>';
 
 		return sprintf(<<<EOF
-      <h2>configuration %s</h2>
-      %s<br/>
+	  <h2>configuration %s</h2>
+	  %s<br/>
 EOF
 			, $this->getToggler('coffeescript_debug', 'Toggle debug info')
 			, $debugInfo
@@ -119,12 +119,12 @@ EOF
 
 		// Generating info rows
 		$infoRows = sprintf(<<<EOF
-      <tr style="%s">
-        <td class="sfWebDebugLogType">%s</td>
-        <td class="sfWebDebugLogType">%s</td>
-        <td class="sfWebDebugLogNumber" style="text-align:center;">%.2f</td>
-      </tr>
-      <tr id="cs_error_%s" style="display:none;background-color:#f18c89;">
+	  <tr style="%s">
+		<td class="sfWebDebugLogType">%s</td>
+		<td class="sfWebDebugLogType">%s</td>
+		<td class="sfWebDebugLogNumber" style="text-align:center;">%.2f</td>
+	  </tr>
+	  <tr id="cs_error_%s" style="display:none;background-color:#f18c89;">
 		  <td style="padding-left:15px" colspan="2">%s<td></tr>
 EOF
 			, $trStyle

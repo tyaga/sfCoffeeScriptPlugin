@@ -24,6 +24,8 @@ class sfCoffeeScript {
 	 **/
 	protected static $results = array();
 
+  protected static $csfileDirs = array();
+
 	/**
 	 * Errors of compiler
 	 *
@@ -163,7 +165,7 @@ class sfCoffeeScript {
 	 * @return  string  a path to JS files directory
 	 */
 	static public function getJsPaths() {
-		return self::getSepFixedPath(sfConfig::get('sf_web_dir')) . '/js/';
+		return array_unique(array_values(self::$csfileDirs));
 	}
 
 	/**
@@ -210,7 +212,58 @@ class sfCoffeeScript {
 	 * @return  string  a path to coffee files directories
 	 */
 	static public function getCsPaths() {
-		return self::getSepFixedPath(sfConfig::get('sf_web_dir')) . '/coffee/';
+
+	if(empty(self::$csfileDirs)) {
+
+		$csPaths = array();
+
+		$defaultCsPath = self::getProjectRelativePath(
+			self::getSepFixedPath(sfConfig::get('sf_web_dir')) . '/coffee'
+		);
+		$defaultJsPath = self::getProjectRelativePath(
+			self::getSepFixedPath(sfConfig::get('sf_web_dir')) . '/js'
+		);
+
+		$userCsPaths = sfConfig::get(
+			'app_sf_coffeescript_plugin_coffeescripts_dirs', 
+			array($defaultCsPath)
+		);
+		$userJsPaths = sfConfig::get(
+			'app_sf_coffeescript_plugin_javascripts_dirs', 
+			array($defaultJsPath)
+		);
+		
+		if(count($userCsPaths) === count($userJsPaths)) {
+
+			for($idx=0, $end=count($userCsPaths); $idx < $end; $idx++) {
+
+				$pathPattern = str_replace("%", "*", $userCsPaths[$idx]);
+
+				foreach (glob($pathPattern) as $path) {
+
+					self::$csfileDirs[$path] = self::getProjectRelativePath(
+						$userJsPaths[$idx]
+					);
+				}
+			}
+
+		} else {
+
+			foreach($userCsPaths as $userCsPath) {
+
+				$pathPattern = str_replace("%", "*", $userCsPath);
+				
+				foreach (glob($pathPattern) as $path) {
+
+					self::$csfileDirs[$path] = self::getProjectRelativePath(
+						$userJsPaths[0]
+					);
+				}
+			}
+		}
+	}
+	
+		return array_keys(self::$csfileDirs);
 	}
 
 	/**
@@ -234,9 +287,10 @@ class sfCoffeeScript {
 	 * @return  string			JS file path
 	 */
 	static public function getJsPathOfCs($csFile) {
+	$csPath = self::getProjectRelativePath(dirname($csFile));
 		return str_replace(
-			array(self::getCsPaths(), '.coffee'),
-			array(self::getJsPaths(), '.js'),
+			array($csPath, '.coffee'),
+			array(self::$csfileDirs[$csPath], '.js'),
 			$csFile
 		);
 	}
@@ -315,7 +369,7 @@ class sfCoffeeScript {
 	 * @return  string		compressed JS
 	 */
 	static public function getCompressedJs($js) {
-		return str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $js);
+		return str_replace(array("\r\n", "\r", "\n", "\t", '  ', '	', '	'), '', $js);
 	}
 
 	/**
