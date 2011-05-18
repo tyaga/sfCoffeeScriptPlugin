@@ -63,6 +63,16 @@ EOF;
 	 * @see sfTask
 	 */
 	protected function execute($arguments = array(), $options = array()) {
+
+		if( $options['application'] !== null ) {
+			$configuration = ProjectConfiguration::getApplicationConfiguration(
+				$options['application'], $options['env'] ? $options['env'] : 'prod',
+				true
+			);
+
+			$this->setConfiguration($configuration);
+		}
+
 		// Remove old JS files if --clean option specified
 		if (isset($options['clean']) && $options['clean']) {
 			foreach (sfCoffeeScript::findJsFiles() as $jsFile)
@@ -99,7 +109,7 @@ EOF;
 					else
 					{
 						$this->logSection(
-							'compiled', str_replace(sfCoffeeScript::getCsPaths(), '', $csFile), null, 'COMMAND'
+							'compiled', sfCoffeeScript::getProjectRelativePath($csFile), null, 'COMMAND'
 						);
 					}
 				}
